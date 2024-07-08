@@ -13,4 +13,5 @@ jobs:
       - name: print goodbye
         run: | 
           echo "bye!"
-          echo "my name is $PLAN "
+          echo "my name is ${{vars.TEST }} "
+           echo "my name is ${{vars.PLAN }} "
