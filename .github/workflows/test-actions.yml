@@ -9,6 +9,8 @@ jobs:
         run: | 
           echo "Hello world!"
           echo "${{ secrets.NAME }}"
-          echo "${{ vars.NAME }}"
+
       - name: print goodbye
-        run: echo "bye!"
+        run: | 
+          echo "bye!"
+          echo "${{ vars.PLAN }}"
