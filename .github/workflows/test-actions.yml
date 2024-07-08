@@ -14,3 +14,11 @@ jobs:
         run: | 
           echo "bye!"
           echo "my name is ${{vars.TEST }} "
+
+  second-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: print goodbye
+        run: | 
+          echo "bye!"
+          echo "my name is ${{vars.TEST }} "
