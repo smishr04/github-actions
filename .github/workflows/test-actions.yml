@@ -24,3 +24,12 @@ jobs:
           azcliversion: latest
           inlineScript: |
             az account show
+     
+      - name: Copy artifacts to azure VM 
+        uses: azure/scp-action@v2
+        with:
+           host: 'vm-test-01' 
+           username: 'vmadmin'
+           password: ${{ secrets.vmpassword }} 
+           source:  .
+           target: 'C:\\Users\\vmadmin'
