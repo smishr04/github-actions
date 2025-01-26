@@ -25,11 +25,19 @@ jobs:
           inlineScript: |
             az account show
 
-      - name: Find VM Private IP address
-        id: get_vm_private_ip
+      - name: Retrieve VM Private IP
+        id: get-vm-ip
         run: |
-          vm_private_ip=$(az vm show -g rg-actions-test -n vm-test-actions --query privateIps[0] -o tsv)
-          echo "::set-output name=vm_private_ip::${vm_private_ip}"
+          private_ip=$(az vm list-ip-addresses \
+            --name vm-test-actions \
+            --resource-group rg-actions-test \
+            --query "[].virtualMachine.network.privateIpAddresses[0]" \
+            --output tsv)
+          echo "PRIVATE_IP=$private_ip" >> $GITHUB_ENV
+
+      - name: Display VM Private IP
+        run: echo "The VM private IP address is $PRIVATE_IP"
+
      
       # - name: Copy artifacts to azure VM 
       #   uses: appleboy/scp-action@master
