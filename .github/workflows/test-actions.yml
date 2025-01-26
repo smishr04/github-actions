@@ -39,11 +39,34 @@ jobs:
         run: echo "The VM private IP address is $PRIVATE_IP"
 
      
-      # - name: Copy artifacts to azure VM 
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #      host: 'vm-test-01' 
-      #      username: 'vmadmin'
-      #      password: ${{ secrets.vmpassword }} 
-      #      source:  .
-      #      target: 'C:\\Users\\vmadmin'
+      - name: Copy files to Azure Windows VM via PowerShell
+        run: |
+          # Install Azure PowerShell if not already installed
+          pwsh -Command "Install-Module -Name Az -AllowClobber -Force"
+      
+          # Authenticate to Azure
+          pwsh -Command "
+          # Upload the file to the Windows VM
+          pwsh -Command "
+            $vmName = 'vm-test-actions'
+            $resourceGroup = 'rg-actions-test'
+            $username = 'actionvmadmin'
+            $password = ${{ secrets.VMPASSWORD }}
+            $fileToCopy = .
+            $destinationPath = 'C:\\users\\actionvmadmin'
+      
+            # Get the private IP of the VM
+            $privateIp = (Get-AzNetworkInterface | Where-Object { $_.VirtualMachine -and $_.VirtualMachine.Id -match $vmName }).IpConfigurations.PrivateIpAddress
+      
+            # Establish a PowerShell session with the VM
+            $session = New-PSSession -ComputerName $privateIp -Credential (New-Object PSCredential($username, $password)) -UseSSL -SessionOption (New-PSSessionOption -SkipCACheck -SkipCNCheck)
+      
+            # Copy the file to the VM
+            Copy-Item -Path $fileToCopy -Destination $destinationPath -ToSession $session
+      
+            # Close the session
+            Remove-PSSession $session
+          "
+        env:
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
