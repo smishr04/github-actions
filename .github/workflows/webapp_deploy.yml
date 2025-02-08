@@ -25,7 +25,6 @@ jobs:
           echo "Preparing deployment package for:"
           echo "App Name: ${{ matrix.app_version.app_name }}"
           echo "Version: ${{ matrix.app_version.version }}"
-          cp -r ./artifacts/${{ matrix.app_version.version }} ./deploy-package
 
       - name: Print Deployment Information
         run: |
