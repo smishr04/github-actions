@@ -1,0 +1,32 @@
+name: Deploy Multiple Versions to Multiple App Services
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_matrix:
+        description: "JSON array of App Services and Versions"
+        required: true
+        default: '[{"app_name":"app1","version":"v1.2.3"}, {"app_name":"app2","version":"v2.1.0"}]'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app_version: ${{ fromJson(inputs.app_matrix) }}
+      max-parallel: 5  # Adjust based on Azure limitations
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set Up Deployment Package
+        run: |
+          echo "Preparing deployment package for:"
+          echo "App Name: ${{ matrix.app_version.app_name }}"
+          echo "Version: ${{ matrix.app_version.version }}"
+          cp -r ./artifacts/${{ matrix.app_version.version }} ./deploy-package
+
+      - name: Print Deployment Information
+        run: |
+          echo "Deploying version ${{ matrix.app_version.version }} for ${{ matrix.app_version.app_name }}"
