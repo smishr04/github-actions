@@ -1,0 +1,9 @@
+name: Deploy Multiple Versions to Multiple App Services
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_matrix:
+        description: "JSON array of 15 App Services and Versions"
+        required: true
+        default: '[{"app_name":"app1","version":"v1.2.3"}, {"app_name":"app2","version":"v2.1.0"}]'
